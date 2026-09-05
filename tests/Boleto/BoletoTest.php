@@ -456,6 +456,45 @@ class BoletoTest extends TestCase
         $this->assertNotNull($boleto->renderPDF());
     }
 
+    public function testBoletoSicrediPixComInstrucaoLonga()
+    {
+        $boleto = new Boleto\Sicredi([
+            'logo'                   => realpath(__DIR__ . '/../../logos/') . DIRECTORY_SEPARATOR . '748.png',
+            'dataVencimento'         => new \Carbon\Carbon(),
+            'valor'                  => 100,
+            'multa'                  => false,
+            'juros'                  => false,
+            'numero'                 => 2,
+            'numeroDocumento'        => 2,
+            'id'                     => 'SICREDIPIX2',
+            'pagador'                => self::$pagador,
+            'beneficiario'           => self::$beneficiario,
+            'carteira'               => '1',
+            'byte'                   => 2,
+            'agencia'                => 1111,
+            'posto'                  => 11,
+            'codigoCliente'          => 11111,
+            'conta'                  => 11111,
+            'descricaoDemonstrativo' => ['demonstrativo 1'],
+            'instrucoes'             => [
+                'Boleto de homologacao sem registro bancario.',
+                'Validar convenio, carteira, posto e codigo do beneficiario antes de producao.',
+            ],
+            'aceite'                 => 'S',
+            'especieDoc'             => 'DM',
+            'pix_chave'              => 'teste@teste.com',
+            'pix_chave_tipo'         => Boleto\Sicredi::TIPO_CHAVEPIX_EMAIL,
+        ]);
+        $boleto->gerarPixCopiaECola();
+
+        $pdf = new Pdf();
+        $pdf->addBoleto($boleto);
+        $pdf->setLocalizacaoPix(Pdf::PIX_INSTRUCAO);
+
+        $this->assertNotEmpty($boleto->toArray()['pix_qrcode']);
+        $this->assertNotNull($pdf->gerarBoleto(Pdf::OUTPUT_STRING));
+    }
+
     public function testBoletoBancoob()
     {
         $boleto = new Boleto\Bancoob([

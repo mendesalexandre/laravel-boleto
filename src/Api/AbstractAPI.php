@@ -45,6 +45,10 @@ abstract class AbstractAPI implements Api
 
     protected $log = null;
 
+    protected $timeout = 30;
+
+    protected $connectTimeout = 10;
+
     protected $beneficiario;
 
     private $curl;
@@ -459,6 +463,46 @@ abstract class AbstractAPI implements Api
     }
 
     /**
+     * @return int
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
+    }
+
+    /**
+     * @param int $timeout
+     *
+     * @return $this
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = max(1, (int) $timeout);
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getConnectTimeout()
+    {
+        return $this->connectTimeout;
+    }
+
+    /**
+     * @param int $connectTimeout
+     *
+     * @return $this
+     */
+    public function setConnectTimeout($connectTimeout)
+    {
+        $this->connectTimeout = max(1, (int) $connectTimeout);
+
+        return $this;
+    }
+
+    /**
      * @return null
      */
     public function getLog()
@@ -618,6 +662,8 @@ abstract class AbstractAPI implements Api
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($curl, CURLOPT_HEADER, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_TIMEOUT, $this->getTimeout());
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $this->getConnectTimeout());
         curl_setopt($curl, CURLOPT_SSLCERT, $this->getCertificado());
         curl_setopt($curl, CURLOPT_SSLKEY, $this->getCertificadoChave());
         if ($senha = $this->getCertificadoSenha()) {
