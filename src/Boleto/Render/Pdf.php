@@ -147,7 +147,8 @@ class Pdf extends AbstractPdf implements PdfContract
         $largura = 170;
         $larguraTexto = 124;
         $xQrCode = $x + 137;
-        $tamanhoQrCode = 32;
+        $yQrCode = $y + 9;
+        $tamanhoQrCode = 30;
 
         $this->Rect($x, $y, $largura, $altura);
 
@@ -180,8 +181,8 @@ class Pdf extends AbstractPdf implements PdfContract
         $this->SetXY($x + 2, $y + 35);
         $this->MultiCell($larguraTexto, 3, $this->_($boleto->getPixQrCode()), 0, 'L', true);
 
-        $this->SetXY($xQrCode, $y + 10);
-        $this->Image($boleto->getPixQrCodeBase64(), $xQrCode, $y + 10, $tamanhoQrCode, $tamanhoQrCode, 'png');
+        $this->SetXY($xQrCode, $yQrCode);
+        $this->Image($boleto->getPixQrCodeBase64(), $xQrCode, $yQrCode, $tamanhoQrCode, $tamanhoQrCode, 'png');
 
         $this->SetFont($this->PadraoFont, 'B', 5);
         $this->SetXY($xQrCode - 1, $y + 40);
