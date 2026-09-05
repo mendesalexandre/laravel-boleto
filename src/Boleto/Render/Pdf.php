@@ -344,9 +344,9 @@ class Pdf extends AbstractPdf implements PdfContract
 
         $yStartPix = $this->GetY();
         $this->SetFont($this->PadraoFont, '', $this->fdes);
-        $this->Cell(95, $this->desc, $this->_('Instruções de responsabilidade do beneficiário. '), 'TL');
+        $this->Cell(88, $this->desc, $this->_('Instruções de responsabilidade do beneficiário. '), 'TL');
         $xStartPix = $this->GetX();
-        $this->Cell(25, $this->desc, '', 'TR');
+        $this->Cell(32, $this->desc, '', 'TR');
         $this->Cell(50, $this->desc, $this->_('(-) Desconto / Abatimentos)'), 'TR', 1);
 
         $this->SetFont($this->PadraoFont, '', $this->fdes);
@@ -421,9 +421,9 @@ class Pdf extends AbstractPdf implements PdfContract
         if ($this->boleto[$i]->getPixQrCode() !== null && $this->localizacao_pix == self::PIX_INSTRUCAO) {
             $this->SetXY($xStartPix, $yStartPix);
             $this->SetFont($this->PadraoFont, 'B', $this->fcel);
-            $this->Cell(25, 6, 'Pague com PIX', '', '', 'C');
+            $this->Cell(32, 6, 'Pague com PIX', '', '', 'C');
             $this->SetFont($this->PadraoFont, '', $this->fdes);
-            $this->Image($this->boleto[$i]->getPixQrCodeBase64(), $xStartPix + 1, $yStartPix + 8, 23, 23, 'png');
+            $this->Image($this->boleto[$i]->getPixQrCodeBase64(), $xStartPix + 1.5, $yStartPix + 8, 29, 29, 'png');
             $this->Line($xStartPix, $yStartPix, $xStartPix, $yEndPix);
 
             $this->SetXY($xOriginal, $yOriginal);
