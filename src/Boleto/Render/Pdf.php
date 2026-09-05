@@ -423,7 +423,7 @@ class Pdf extends AbstractPdf implements PdfContract
             $this->SetFont($this->PadraoFont, 'B', $this->fcel);
             $this->Cell(32, 6, 'Pague com PIX', '', '', 'C');
             $this->SetFont($this->PadraoFont, '', $this->fdes);
-            $this->Image($this->boleto[$i]->getPixQrCodeBase64(), $xStartPix + 1.5, $yStartPix + 8, 29, 29, 'png');
+            $this->Image($this->boleto[$i]->getPixQrCodeBase64(), $xStartPix + 2.5, $yStartPix + 7, 27, 27, 'png');
             $this->Line($xStartPix, $yStartPix, $xStartPix, $yEndPix);
 
             $this->SetXY($xOriginal, $yOriginal);
