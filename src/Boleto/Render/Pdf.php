@@ -95,100 +95,36 @@ class Pdf extends AbstractPdf implements PdfContract
 
         $this->SetFont($this->PadraoFont, 'B', 8);
         if ($this->showInstrucoes) {
-            if ($this->usaInformativoPix($i)) {
-                $this->informativoPix($i);
+            $this->Cell(0, 5, $this->_('Instruções de Impressão'), 0, 1, 'C');
+            $this->Ln(5);
+            $this->SetFont($this->PadraoFont, '', 6);
+            if (count($this->boleto[$i]->getInstrucoesImpressao()) > 0) {
+                $this->listaLinhas($this->boleto[$i]->getInstrucoesImpressao(), 0);
             } else {
-                $this->Cell(0, 5, $this->_('Instruções de Impressão'), 0, 1, 'C');
-                $this->Ln(5);
-                $this->SetFont($this->PadraoFont, '', 6);
-                if (count($this->boleto[$i]->getInstrucoesImpressao()) > 0) {
-                    $this->listaLinhas($this->boleto[$i]->getInstrucoesImpressao(), 0);
-                } else {
-                    $this->Cell(0, $this->desc, $this->_('- Imprima em impressora jato de tinta (ink jet) ou laser em qualidade normal ou alta (Não use modo econômico).'), 0, 1, 'L');
-                    $this->Cell(0, $this->desc, $this->_('- Utilize folha A4 (210 x 297 mm) ou Carta (216 x 279 mm) e margens mínimas à esquerda e à direita do formulário.'), 0, 1, 'L');
-                    $this->Cell(0, $this->desc, $this->_('- Corte na linha indicada. Não rasure, risque, fure ou dobre a região onde se encontra o código de barras.'), 0, 1, 'L');
-                    $this->Cell(0, $this->desc, $this->_('- Caso não apareça o código de barras no final, clique em F5 para atualizar esta tela.'), 0, 1, 'L');
-                    $this->Cell(0, $this->desc, $this->_('- Caso tenha problemas ao imprimir, copie a seqüencia numérica abaixo e pague no caixa eletrônico ou no internet banking:'), 0, 1, 'L');
-                }
-                $this->Ln(4);
-
-                $this->SetFont($this->PadraoFont, '', $this->fcel);
-                $this->Cell(25, $this->cell, $this->_('Linha Digitável: '), 0, 0);
-                $this->SetFont($this->PadraoFont, 'B', $this->fcel);
-                $this->Cell(0, $this->cell, $this->_($this->boleto[$i]->getLinhaDigitavel()), 0, 1);
-                $this->SetFont($this->PadraoFont, '', $this->fcel);
-                $this->Cell(25, $this->cell, $this->_('Número: '), 0, 0);
-                $this->SetFont($this->PadraoFont, 'B', $this->fcel);
-                $this->Cell(0, $this->cell, $this->_($this->boleto[$i]->getNumero()), 0, 1);
-                $this->SetFont($this->PadraoFont, '', $this->fcel);
-                $this->Cell(25, $this->cell, $this->_('Valor: '), 0, 0);
-                $this->SetFont($this->PadraoFont, 'B', $this->fcel);
-                $this->Cell(0, $this->cell, $this->_(Util::nReal($this->boleto[$i]->getValor())), 0, 1);
-                $this->SetFont($this->PadraoFont, '', $this->fcel);
+                $this->Cell(0, $this->desc, $this->_('- Imprima em impressora jato de tinta (ink jet) ou laser em qualidade normal ou alta (Não use modo econômico).'), 0, 1, 'L');
+                $this->Cell(0, $this->desc, $this->_('- Utilize folha A4 (210 x 297 mm) ou Carta (216 x 279 mm) e margens mínimas à esquerda e à direita do formulário.'), 0, 1, 'L');
+                $this->Cell(0, $this->desc, $this->_('- Corte na linha indicada. Não rasure, risque, fure ou dobre a região onde se encontra o código de barras.'), 0, 1, 'L');
+                $this->Cell(0, $this->desc, $this->_('- Caso não apareça o código de barras no final, clique em F5 para atualizar esta tela.'), 0, 1, 'L');
+                $this->Cell(0, $this->desc, $this->_('- Caso tenha problemas ao imprimir, copie a seqüencia numérica abaixo e pague no caixa eletrônico ou no internet banking:'), 0, 1, 'L');
             }
+            $this->Ln(4);
+
+            $this->SetFont($this->PadraoFont, '', $this->fcel);
+            $this->Cell(25, $this->cell, $this->_('Linha Digitável: '), 0, 0);
+            $this->SetFont($this->PadraoFont, 'B', $this->fcel);
+            $this->Cell(0, $this->cell, $this->_($this->boleto[$i]->getLinhaDigitavel()), 0, 1);
+            $this->SetFont($this->PadraoFont, '', $this->fcel);
+            $this->Cell(25, $this->cell, $this->_('Número: '), 0, 0);
+            $this->SetFont($this->PadraoFont, 'B', $this->fcel);
+            $this->Cell(0, $this->cell, $this->_($this->boleto[$i]->getNumero()), 0, 1);
+            $this->SetFont($this->PadraoFont, '', $this->fcel);
+            $this->Cell(25, $this->cell, $this->_('Valor: '), 0, 0);
+            $this->SetFont($this->PadraoFont, 'B', $this->fcel);
+            $this->Cell(0, $this->cell, $this->_(Util::nReal($this->boleto[$i]->getValor())), 0, 1);
+            $this->SetFont($this->PadraoFont, '', $this->fcel);
         }
 
         $this->traco('Recibo do Pagador', 4);
-
-        return $this;
-    }
-
-    protected function usaInformativoPix($i)
-    {
-        return $this->boleto[$i]->getPixQrCode() !== null && $this->localizacao_pix == self::PIX_INSTRUCAO;
-    }
-
-    protected function informativoPix($i)
-    {
-        $boleto = $this->boleto[$i];
-        $x = $this->GetX();
-        $y = $this->GetY();
-        $altura = 44;
-        $largura = 170;
-        $larguraTexto = 124;
-        $xQrCode = $x + 137;
-        $tamanhoQrCode = 32;
-
-        $this->Rect($x, $y, $largura, $altura);
-
-        $this->SetFont($this->PadraoFont, 'B', 8);
-        $this->SetXY($x, $y + 1);
-        $this->Cell($largura, 4, $this->_('INFORMATIVO'), 0, 1, 'C');
-
-        $this->SetFont($this->PadraoFont, '', 7);
-        $this->SetXY($x + 128, $y + 2);
-        $this->Cell(40, 4, $this->_('Vencimento: ' . $boleto->getDataVencimento()->format('d/m/Y')), 0, 1, 'R');
-        $this->SetX($x + 128);
-        $this->Cell(40, 4, $this->_('Valor: ' . Util::nReal($boleto->getValor())), 0, 1, 'R');
-
-        $this->SetFont($this->PadraoFont, '', 7);
-        $this->SetXY($x + 2, $y + 9);
-        $this->listaLinhas(array_filter($boleto->getInstrucoes()), 0, $larguraTexto);
-
-        $this->SetTextColor(0, 120, 40);
-        $this->SetFont($this->PadraoFont, 'B', 8);
-        $this->SetXY($x + 2, $y + 25);
-        $this->Cell($larguraTexto, 4, $this->_('Pague agora via PIX, basta acessar o aplicativo de sua instituição financeira'), 0, 1);
-        $this->SetTextColor(0, 0, 0);
-
-        $this->SetFont($this->PadraoFont, 'B', 8);
-        $this->SetXY($x + 2, $y + 30);
-        $this->Cell($larguraTexto, 4, $this->_('PIX copia e cola'), 0, 1);
-
-        $this->SetFillColor(235, 235, 235);
-        $this->SetFont($this->PadraoFont, 'B', 5);
-        $this->SetXY($x + 2, $y + 35);
-        $this->MultiCell($larguraTexto, 3, $this->_($boleto->getPixQrCode()), 0, 'L', true);
-
-        $this->SetXY($xQrCode, $y + 10);
-        $this->Image($boleto->getPixQrCodeBase64(), $xQrCode, $y + 10, $tamanhoQrCode, $tamanhoQrCode, 'png');
-
-        $this->SetFont($this->PadraoFont, 'B', 5);
-        $this->SetXY($xQrCode - 1, $y + 40);
-        $this->Cell($tamanhoQrCode + 2, 3, $this->_('ESCANEIE O QRCODE P/ PAGAR'), 0, 1, 'C');
-
-        $this->SetFillColor(255, 255, 255);
-        $this->SetXY($x, $y + $altura + 2);
 
         return $this;
     }
@@ -406,19 +342,11 @@ class Pdf extends AbstractPdf implements PdfContract
         $this->Cell(25, $this->cell, $this->_(($this->boleto[$i]->getCodigoBanco() == '001') ? Util::nReal($this->boleto[$i]->getValor()) : ''), 'R');
         $this->Cell(50, $this->cell, $this->_(Util::nReal($this->boleto[$i]->getValor())), 'R', 1, 'R');
 
-        $exibePixNaFicha = $this->boleto[$i]->getPixQrCode() !== null
-            && $this->localizacao_pix == self::PIX_INSTRUCAO
-            && ! $this->usaInformativoPix($i);
-        $larguraInstrucoes = $exibePixNaFicha ? 88 : 120;
-        $larguraPix = $exibePixNaFicha ? 32 : 0;
-
         $yStartPix = $this->GetY();
         $this->SetFont($this->PadraoFont, '', $this->fdes);
-        $this->Cell($larguraInstrucoes, $this->desc, $this->_('Instruções de responsabilidade do beneficiário. '), 'TL');
+        $this->Cell(88, $this->desc, $this->_('Instruções de responsabilidade do beneficiário. '), 'TL');
         $xStartPix = $this->GetX();
-        if ($larguraPix > 0) {
-            $this->Cell($larguraPix, $this->desc, '', 'TR');
-        }
+        $this->Cell(32, $this->desc, '', 'TR');
         $this->Cell(50, $this->desc, $this->_('(-) Desconto / Abatimentos)'), 'TR', 1);
 
         $this->SetFont($this->PadraoFont, '', $this->fdes);
@@ -484,13 +412,13 @@ class Pdf extends AbstractPdf implements PdfContract
             $this->listaLinhas(
                 $this->boleto[$i]->getInstrucoes(),
                 0,
-                $exibePixNaFicha ? 82 : 0
+                $this->boleto[$i]->getPixQrCode() !== null && $this->localizacao_pix == self::PIX_INSTRUCAO ? 82 : 0
             );
 
             $this->SetXY($xOriginal, $yOriginal);
         }
 
-        if ($exibePixNaFicha) {
+        if ($this->boleto[$i]->getPixQrCode() !== null && $this->localizacao_pix == self::PIX_INSTRUCAO) {
             $this->SetXY($xStartPix, $yStartPix);
             $this->SetFont($this->PadraoFont, 'B', $this->fcel);
             $this->Cell(32, 6, 'Pague com PIX', '', '', 'C');
