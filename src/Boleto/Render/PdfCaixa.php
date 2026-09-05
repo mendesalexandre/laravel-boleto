@@ -256,7 +256,11 @@ class PdfCaixa extends AbstractPdf implements PdfContract
             $this->Ln(3);
             $this->SetFont($this->PadraoFont, 'B', $this->fcel);
 
-            $this->listaLinhas($this->boleto[$i]->getInstrucoes(), 0);
+            $this->listaLinhas(
+                $this->boleto[$i]->getInstrucoes(),
+                0,
+                $this->boleto[$i]->getPixQrCode() !== null ? 82 : 0
+            );
 
             $this->SetXY($xOriginal, $yOriginal);
             $this->Cell(0, 0, $this->_(''), 'LR', 1);
@@ -651,11 +655,11 @@ class PdfCaixa extends AbstractPdf implements PdfContract
      *
      * @return int
      */
-    private function listaLinhas($lista, $pulaLinha)
+    private function listaLinhas($lista, $pulaLinha, $largura = 0)
     {
         foreach ($lista as $d) {
             $pulaLinha -= 2;
-            $this->MultiCell(0, $this->cell - 0.2, $this->_(preg_replace('/(%)/', '%$1', $d)), 0, 1);
+            $this->MultiCell($largura, $this->cell - 0.2, $this->_(preg_replace('/(%)/', '%$1', $d)), 0, 1);
         }
 
         return $pulaLinha;
